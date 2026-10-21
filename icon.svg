@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#142D40"/>
+      <stop offset="100%" stop-color="#071321"/>
+    </linearGradient>
+
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#D5E1E8"/>
+      <stop offset="100%" stop-color="#8296A5"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+
+  <rect x="24" y="24" width="464" height="464" rx="94"
+        fill="none" stroke="#21D18B" stroke-width="5"/>
+
+  <rect x="38" y="38" width="436" height="436" rx="82"
+        fill="none" stroke="#D5E1E8" stroke-opacity=".15" stroke-width="2"/>
+
+  <path d="M145 365 L145 145 L207 145 L318 287 L318 145 L374 145 L374 365 L316 365 L201 219 L201 365 Z"
+        fill="#21D18B" opacity=".28" filter="url(#shadow)"/>
+
+  <path d="M130 370 L130 142 L195 142 L315 292 L315 142 L380 142 L380 370 L315 370 L195 220 L195 370 Z"
+        fill="url(#metal)"/>
+
+  <path d="M195 142 L220 142 L340 292 L315 292 Z"
+        fill="#FFFFFF" opacity=".22"/>
+
+  <path d="M130 370 L195 370 L195 346 L130 346 Z"
+        fill="#21D18B"/>
+
+  <path d="M315 142 L380 142 L380 166 L315 166 Z"
+        fill="#21D18B"/>
+
+  <circle cx="420" cy="92" r="8" fill="#21D18B"/>
+  <circle cx="92" cy="420" r="5" fill="#D5E1E8" opacity=".8"/>
+</svg>
