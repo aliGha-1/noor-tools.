@@ -33,16 +33,70 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-      - name: Prepare icon
+      - name: Prepare application icon
         run: |
           mkdir -p assets
           convert -background none icon.svg -resize 1024x1024 assets/icon.png
 
-      - name: Prepare web files
+      - name: Prepare web application
         run: |
           mkdir -p www
           cp index.html www/index.html
-          node -e "const fs=require('fs');const p='capacitor.config.json';const c=JSON.parse(fs.readFileSync(p,'utf8'));c.webDir='www';fs.writeFileSync(p,JSON.stringify(c,null,2));"
+
+          for file in database.js app-config.js app.js app-loader.js; do
+            test -f "$file" || {
+              echo "ERROR: Missing required file: $file"
+              exit 1
+            }
+            cp "$file" "www/$file"
+          done
+
+          node <<'NODE'
+          const fs = require('fs');
+
+          const htmlPath = 'www/index.html';
+          let html = fs.readFileSync(htmlPath, 'utf8');
+
+          const scripts = [
+            'database.js',
+            'app-config.js',
+            'app.js',
+            'app-loader.js'
+          ];
+
+          if (!html.includes('database.js')) {
+            const tags = scripts
+              .map(file => `<script src="${file}"></script>`)
+              .join('\n');
+
+            if (!html.includes('</body>')) {
+              throw new Error('index.html does not contain </body>');
+            }
+
+            html = html.replace('</body>', `${tags}\n</body>`);
+          }
+
+          fs.writeFileSync(htmlPath, html);
+          console.log('Application files connected successfully.');
+          NODE
+
+          mkdir -p www/assets
+          cp assets/icon.png www/assets/icon.png
+
+      - name: Configure Capacitor
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'capacitor.config.json';
+          const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+
+          config.webDir = 'www';
+
+          fs.writeFileSync(
+            path,
+            JSON.stringify(config, null, 2)
+          );
+          NODE
 
       - name: Install dependencies
         run: npm install
