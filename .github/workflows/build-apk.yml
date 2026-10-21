@@ -1,0 +1,57 @@
+name: Build NOOR TOOLS APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
+          node -e "const fs=require('fs'); const p='capacitor.config.json'; const c=JSON.parse(fs.readFileSync(p,'utf8')); c.webDir='www'; fs.writeFileSync(p,JSON.stringify(c,null,2));"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create Android project
+        run: npx cap add android
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload NOOR TOOLS APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOR-TOOLS-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
