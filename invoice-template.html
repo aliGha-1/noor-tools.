@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فاتورة NOOR TOOLS</title>
+
+  <style>
+    :root {
+      --navy: #071321;
+      --green: #19D58A;
+      --silver: #C7D2DE;
+      --text: #172536;
+      --border: #D9E1E9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #E9EEF3;
+      color: var(--text);
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    .invoice {
+      max-width: 850px;
+      margin: auto;
+      padding: 30px;
+      background: #FFFFFF;
+      border-radius: 14px;
+      box-shadow: 0 8px 30px #07132118;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 22px;
+      border-bottom: 4px solid var(--green);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 76px;
+      height: 76px;
+      flex-shrink: 0;
+      border: 3px solid var(--green);
+      border-radius: 18px;
+      background: var(--navy);
+      color: var(--silver);
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 27px;
+    }
+
+    .subtitle {
+      color: #647487;
+      font-size: 13px;
+    }
+
+    .invoice-type {
+      padding: 12px 18px;
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      color: #08784D;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .detail {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .detail strong {
+      color: var(--navy);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+
+    th {
+      padding: 13px 8px;
+      background: var(--navy);
+      color: #FFFFFF;
+      font-size: 13px;
+    }
+
+    td {
+      padding: 13px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #F5F8FA;
+    }
+
+    .summary {
+      width: 100%;
+      max-width: 360px;
+      margin: 24px 0 0 auto;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-row.total {
+      margin-top: 8px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--navy);
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .notes {
+      min-height: 65px;
+      margin-top: 28px;
+      padding: 14px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      line-height: 1.9;
+      font-size: 12px;
+      color: #647487;
+    }
+
+    .footer strong {
+      color: var(--navy);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px auto;
+    }
+
+    button {
+      padding: 12px 22px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: var(--navy);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: var(--navy);
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 8px;
+      }
+
+      .invoice {
+        padding: 14px;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .logo {
+        width: 58px;
+        height: 58px;
+        font-size: 36px;
+      }
+
+      h1 {
+        font-size: 21px;
+      }
+
+      .details {
+        grid-template-columns: 1fr;
+      }
+
+      th, td {
+        padding: 9px 4px;
+        font-size: 11px;
+      }
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #FFFFFF;
+      }
+
+      .invoice {
+        max-width: none;
+        padding: 10px;
+        box-shadow: none;
+      }
+
+      .actions {
+        display: none;
+      }
+
+      .header,
+      th,
+      .summary-row.total,
+      .logo {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      tr {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="invoice">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">N</div>
+
+        <div>
+          <h1>NOOR TOOLS</h1>
+          <div class="subtitle">
+            نور تولز — إدارة المبيعات والمشتريات
+          </div>
+        </div>
+      </div>
+
+      <div class="invoice-type" id="invoiceType">
+        فاتورة مبيعات
+      </div>
+    </header>
+
+    <section class="details">
+      <div class="detail">
+        <strong>رقم الفاتورة:</strong>
+        <span id="invoiceNumber">—</span>
+      </div>
+
+      <div class="detail">
+        <strong>التاريخ:</strong>
+        <span id="invoiceDate">—</span>
+      </div>
+
+      <div class="detail">
+        <strong>اسم العميل / المورد:</strong>
+        <span id="partyName">—</span>
+      </div>
+
+      <div class="detail">
+        <strong>طريقة الدفع:</strong>
+        <span id="paymentMethod">—</span>
+      </div>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th>م</th>
+          <th>الصنف</th>
+          <th>الكمية</th>
+          <th>سعر الوحدة</th>
+          <th>الإجمالي</th>
+        </tr>
+      </thead>
+
+      <tbody id="invoiceItems">
+        <tr>
+          <td colspan="5">لم تتم إضافة أصناف بعد</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <section class="summary">
+      <div class="summary-row">
+        <span>عدد الأصناف:</span>
+        <strong id="itemsCount">0</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>الإجمالي قبل الخصم:</span>
+        <strong id="subtotal">0.00 ج.م</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>الخصم:</span>
+        <strong id="discount">0.00 ج.م</strong>
+      </div>
+
+      <div class="summary-row total">
+        <span>الإجمالي النهائي:</span>
+        <strong id="grandTotal">0.00 ج.م</strong>
+      </div>
+    </section>
+
+    <section class="notes">
+      <strong>ملاحظات:</strong>
+      <span id="invoiceNotes">—</span>
+    </section>
+
+    <footer class="footer">
+      <strong>NOOR TOOLS — نور تولز</strong>
+      <br>
+      تصميم وتطوير: م. علي غريب
+      <br>
+      للتواصل: 01559330658
+    </footer>
+  </main>
+
+  <div class="actions">
+    <button onclick="window.print()">طباعة الفاتورة</button>
+
+    <button
+      class="secondary"
+      onclick="window.close()">
+      إغلاق
+    </button>
+  </div>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+
+      function setText(id, value) {
+        document.getElementById(id).textContent =
+          value == null || value === "" ? "—" : String(value);
+      }
+
+      function money(value) {
+        const number = Number(value) || 0;
+
+        return number.toLocaleString("ar-EG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }) + " ج.م";
+      }
+
+      function loadInvoice() {
+        let invoice;
+
+        try {
+          const raw = sessionStorage.getItem("noor_print_invoice");
+
+          if (raw) {
+            invoice = JSON.parse(raw);
+          }
+        } catch (error) {
+          console.error("تعذر قراءة بيانات الفاتورة:", error);
+        }
+
+        if (!invoice) {
+          invoice = {
+            id: params.get("id") || "",
+            type: params.get("type") || "sale",
+            createdAt: new Date().toISOString(),
+            items: [],
+            total: 0
+          };
+        }
+
+        setText(
+          "invoiceType",
+          invoice.type === "purchase" ? "فاتورة مشتريات" : "فاتورة مبيعات"
+        );
+
+        setText("invoiceNumber", invoice.id);
+        setText(
+          "invoiceDate",
+          invoice.createdAt
+            ? new Date(invoice.createdAt).toLocaleString("ar-EG")
+            : "—"
+        );
+
+        setText("partyName", invoice.partyName);
+        setText("paymentMethod", invoice.paymentMethod);
+        setText("invoiceNotes", invoice.notes);
+
+        const items = Array.isArray(invoice.items) ? invoice.items : [];
+        const tbody = document.getElementById("invoiceItems");
+
+        tbody.replaceChildren();
+
+        let subtotal = 0;
+
+        if (items.length === 0) {
+          const row = tbody.insertRow();
+          const cell = row.insertCell();
+
+          cell.colSpan = 5;
+          cell.textContent = "لا توجد أصناف في هذه الفاتورة";
+        } else {
+          items.forEach((item, index) => {
+            const quantity = Number(item.quantity) || 0;
+            const price = Number(item.price) || 0;
+            const lineTotal = quantity * price;
+
+            subtotal += lineTotal;
+
+            const row = tbody.insertRow();
+            const values = [
+              index + 1,
+              item.name || item.productName || item.productId || "صنف",
+              quantity,
+              money(price),
+              money(lineTotal)
+            ];
+
+            values.forEach(value => {
+              const cell = row.insertCell();
+              cell.textContent = String(value);
+            });
+          });
+        }
+
+        const discount = Number(invoice.discount) || 0;
+        const total = Number.isFinite(Number(invoice.total))
+          ? Number(invoice.total)
+          : Math.max(0, subtotal - discount);
+
+        setText("itemsCount", items.length);
+        setText("subtotal", money(subtotal));
+        setText("discount", money(discount));
+        setText("grandTotal", money(total));
+      }
+
+      loadInvoice();
+    })();
+  </script>
+</body>
+</html>
