@@ -1,125 +1,40 @@
 name: Build NOOR TOOLS APK
-
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-
+    branches: [main]
 permissions:
   contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout project
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
+          cache: npm
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
-
-      - name: Install image tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
-
-      - name: Prepare application icon
-        run: |
-          mkdir -p assets
-          convert -background none icon.svg -resize 1024x1024 assets/icon.png
-
-      - name: Prepare web application
+          java-version: '17'
+      - name: Install dependencies
+        run: npm install
+      - name: Prepare web assets
         run: |
           mkdir -p www
           cp index.html www/index.html
-
-          for file in database.js app-config.js app.js app-loader.js; do
-            test -f "$file" || {
-              echo "ERROR: Missing required file: $file"
-              exit 1
-            }
-            cp "$file" "www/$file"
-          done
-
-          node <<'NODE'
-          const fs = require('fs');
-
-          const htmlPath = 'www/index.html';
-          let html = fs.readFileSync(htmlPath, 'utf8');
-
-          const scripts = [
-            'database.js',
-            'app-config.js',
-            'app.js',
-            'app-loader.js'
-          ];
-
-          if (!html.includes('database.js')) {
-            const tags = scripts
-              .map(file => `<script src="${file}"></script>`)
-              .join('\n');
-
-            if (!html.includes('</body>')) {
-              throw new Error('index.html does not contain </body>');
-            }
-
-            html = html.replace('</body>', `${tags}\n</body>`);
-          }
-
-          fs.writeFileSync(htmlPath, html);
-          console.log('Application files connected successfully.');
-          NODE
-
-          mkdir -p www/assets
-          cp assets/icon.png www/assets/icon.png
-
-      - name: Configure Capacitor
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const path = 'capacitor.config.json';
-          const config = JSON.parse(fs.readFileSync(path, 'utf8'));
-
-          config.webDir = 'www';
-
-          fs.writeFileSync(
-            path,
-            JSON.stringify(config, null, 2)
-          );
-          NODE
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Capacitor assets tool
-        run: npm install --save-dev @capacitor/assets
-
-      - name: Create Android project
+      - name: Add Android platform
         run: npx cap add android
-
-      - name: Generate Android icons
-        run: npx capacitor-assets generate --android
-
       - name: Sync Android project
         run: npx cap sync android
-
-      - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload NOOR TOOLS APK
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NOOR-TOOLS-APK
